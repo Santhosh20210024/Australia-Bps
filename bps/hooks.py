@@ -113,12 +113,12 @@ app_license = "MIT"
 # Scheduled Tasks
 # ---------------
 
-scheduler_events = {
-        "cron": {
-                "0/1 * * * *": [
-                        "bps.scheduler_job.delete_old_files",
-],
-}}
+# scheduler_events = {
+#         "cron": {
+#                 "0/1 * * * *": [
+#                         "bps.scheduler_job.delete_old_files",
+# ],
+# }}
 
 # scheduler_events = {
 #	"all": [
