@@ -9,6 +9,7 @@
  "field_order": [
   "first_name",
   "last_name",
+  "full_name",
   "date_of_birth",
   "post_code",
   "authentication_key",
@@ -16,29 +17,28 @@
   "search_endpoint",
   "demographics",
   "correspondence_out",
-  "correspondence_in"
+  "correspondence_in",
+  "patient_settings",
+  "practice_details"
  ],
  "fields": [
   {
    "fieldname": "first_name",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "First Name",
-   "reqd": 1
+   "label": "First Name"
   },
   {
    "fieldname": "last_name",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Last Name",
-   "reqd": 1
+   "label": "Last Name"
   },
   {
    "fieldname": "post_code",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Post Code",
-   "reqd": 1
+   "label": "Post Code"
   },
   {
    "fieldname": "authentication_key",
@@ -88,13 +88,31 @@
    "fieldname": "date_of_birth",
    "fieldtype": "Date",
    "in_list_view": 1,
-   "label": "Date of Birth",
-   "reqd": 1
+   "label": "Date of Birth"
+  },
+  {
+   "default": "https://api.medirecords.com/v1/patients/{patient_id}/settings/",
+   "fieldname": "patient_settings",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Patient settings"
+  },
+  {
+   "default": "https://api.medirecords.com/v1/practices/",
+   "fieldname": "practice_details",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Practice Details"
+  },
+  {
+   "fieldname": "full_name",
+   "fieldtype": "Data",
+   "label": "Full Name"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-21 19:17:41.745231",
+ "modified": "2023-07-27 15:39:59.243156",
  "modified_by": "Administrator",
  "module": "Bps",
  "name": "BPS",

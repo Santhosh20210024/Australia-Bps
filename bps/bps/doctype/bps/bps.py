@@ -319,13 +319,14 @@ class BPS(Document):
         )
         self.save_xml_doc()
         self.clear_credientials()
-        self.clear_files()  # change it
+        # self.clear_files(  # change it
 
 
 # chnages 
-# tag
-# git
-# removal
-# cron
+# tag ok
+# git  ok
+# removal ok
+# cron ok
 # video
 # sample data
+
