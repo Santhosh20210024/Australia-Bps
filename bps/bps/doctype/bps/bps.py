@@ -151,7 +151,7 @@ class BPS(Document):
             )
 
             if responce_status != 200:
-                return frappe.throw("Invalid API responce (practice)")
+                return frappe.throw(f"Invalid API responce (practice){self.last_name}{self.first_name}")
 
             else:
                 if (
@@ -289,8 +289,8 @@ class BPS(Document):
             response = self.send_post_request(
                 f"http://172.19.0.1:8080/ehr/api/v1/launch?patient_file={self.file_name}.json&output_file={self.file_name}.xml"
             )
-            if response.status_code != 200:
-                frappe.throw("Invalid responce from server!");
+            # if response.status_code != 200:
+            #     frappe.throw("Invalid responce from server!");
         else:
             frappe.throw("Invalid File Name!")
         
