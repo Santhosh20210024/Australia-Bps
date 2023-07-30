@@ -53,7 +53,7 @@ class BPS(Document):
             )
 
             if responce_status != 200:
-                frappe.throw("Error: Invalid API Request/Response")
+                frappe.throw("Error: Invalid API Request/Response (address)")
 
             # elif not self.validate_post_code(patient_addresses_responce):
             #     frappe.throw("Post Code does not match")
@@ -66,7 +66,7 @@ class BPS(Document):
     def get_file_data(self, url):
         data_response = requests.get(url)
         file_format = data_response.headers["Content-Type"].split("/")[-1].upper()
-        return b64encode(data_response.content).decode(), file_format
+        return str(data_response.content), file_format
 
     def process_inner_urls(self, _response):
         count = 1
@@ -85,10 +85,8 @@ class BPS(Document):
                 if "htmlContent" in response.keys():
                     if response["htmlContent"] != None:
                         response["documentType"] = "HTML"
-                        html_bytes = response["htmlContent"].encode("utf-8")
-                        response["attachmentContent"] = b64encode(html_bytes).decode(
-                            "utf-8"
-                        )
+                        html_bytes = response["htmlContent"]
+                        response["attachmentContent"] = html_bytes
 
         return _response
 
@@ -99,7 +97,7 @@ class BPS(Document):
             )
 
             if responce_status != 200:
-                frappe.throw("Error: Invalid API Request/Response")
+                frappe.throw("Error: Invalid API Request/Response (corrIn)")
 
             patient_correspondenceIn_response = self.process_inner_urls(
                 patient_correspondenceIn_response
@@ -120,7 +118,7 @@ class BPS(Document):
             )
 
             if responce_status != 200:
-                frappe.throw("Error: Invalid API Request/Response")
+                frappe.throw("Error: Invalid API Request/Response (corr Out)")
 
             patient_correspondenceOut_response = self.process_inner_urls(
                 patient_correspondenceOut_response
@@ -138,7 +136,8 @@ class BPS(Document):
             )
 
             if responce_status != 200:
-                frappe.throw("Error: Invalid API Request/Response")
+                frappe.throw("Error: Invalid API response/request (Settings)")
+                return None
 
             return patient_settings_response
 
@@ -153,7 +152,7 @@ class BPS(Document):
             )
 
             if responce_status != 200:
-                frappe.throw("Error: Invalid API Request/Response")
+                frappe.throw("Error: Invalid API Request/Response (practice)")
 
             else:
                 if (
@@ -172,14 +171,6 @@ class BPS(Document):
 
         except Exception as e:
             print("Error: ", e)
-
-    # pension card settings
-    # def mapping(self, response):
-    #     if response["pensionCardtype"] != None:
-    #         response["pensionCardtype"] = self.pension_CardType[response["pensionCardtype"]]
-    #     if response["dvaCardtype"] != None:
-    #         response["dvaCardtype"] = self.dvaCardtype[response["dvaCardtype"]]
-    #     return response
 
     def process_json(self):
         try:
@@ -203,7 +194,7 @@ class BPS(Document):
             )
 
             if response_status != 200:
-                frappe.throw("Error: Invalid API Request/Response")
+                frappe.throw("Error: Invalid API Request/Response (search)")
 
             elif len(patient_search_response["data"]) == 0:
                 frappe.throw("No Record Found!")
@@ -242,16 +233,7 @@ class BPS(Document):
                         self.details_dict["practice"] = self.get_practice_details(
                             self.details_dict["patientDetails"]["defaultPracticeId"]
                         )
-
-                        # clinical information
-                        # my assumptions about the deathof Death nill if not exists
-                        # clinicalDetails = {
-                        #       "dateOfDeath": patient_search_response["data"][0]["dateOfDeath"],
-                        #       "causeOfDeath": patient_search_response["data"][0]["causeOfDeath"],
-                        #       "patientstatus": 3  #for testing purpose
-                        #  }
-
-                        # self.details_dict["clinicalDetails"] = clinicalDetails
+                        
                 else:
                     frappe.throw("Could not find patient!")
                     # print("details_dictionary is ready")
@@ -291,22 +273,26 @@ class BPS(Document):
 
     def clear_files(self):
         # check the file exists
-        if os.path.exists(
-            f"/home/frappe/frappe-bench/sites/json/{self.file_name}.json"
-        ):
-            os.remove(f"/home/frappe/frappe-bench/sites/json/{self.file_name}.json")
+        # if os.path.exists(
+        #     f"/home/frappe/frappe-bench/sites/json/{self.file_name}.json"
+        # ):
+        #     os.remove(f"/home/frappe/frappe-bench/sites/json/{self.file_name}.json")
 
-        if os.path.exists(f"/home/frappe/frappe-bench/sites/xml/{self.file_name}.xml"):
-            os.remove(f"/home/frappe/frappe-bench/sites/xml/{self.file_name}.xml")
+        # if os.path.exists(f"/home/frappe/frappe-bench/sites/xml/{self.file_name}.xml"):
+        #     os.remove(f"/home/frappe/frappe-bench/sites/xml/{self.file_name}.xml")
 
     def validate(self):
         # checking only the post code!
         # if not self.post_code.isdigit():
         #     frappe.throw("Invalid Post Code!")
         self.process_json()
-        self.send_post_request(
+        if self.file_name is not "":
+            self.send_post_request(
                 f"http://172.19.0.1:8080/ehr/api/v1/launch?patient_file={self.file_name}.json&output_file={self.file_name}.xml"
         )
-        self.save_xml_doc()
+        else:
+            frappe.throw("Invalid File Name!")
+        
+        # self.save_xml_doc()
         self.clear_credientials()
-        self.clear_files()
+        #self.clear_files()
