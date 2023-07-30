@@ -271,7 +271,7 @@ class BPS(Document):
                 )
                 file_doc.save()
 
-    def clear_files(self):
+    #def clear_files(self):
         # check the file exists
         # if os.path.exists(
         #     f"/home/frappe/frappe-bench/sites/json/{self.file_name}.json"
